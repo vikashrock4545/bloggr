@@ -1,7 +1,7 @@
 import { Hono } from "hono";
 import { PrismaClient } from '@prisma/client/edge';
 import { withAccelerate } from '@prisma/extension-accelerate';
-import { sign } from 'hono/jwt'
+import { sign, verify } from 'hono/jwt'
 import { signinInput, signupInput } from "@vikashrock45/bloggr-common";
 
 
@@ -11,6 +11,49 @@ export const userRouter = new Hono<{
         JWT_SECRET: string,
     }
 }>()
+
+userRouter.get('/', async (c) => {
+    const prisma = new PrismaClient({
+        datasources: {
+            db: {
+                url: c.env.DATABASE_URL,
+            },
+        },
+    }).$extends(withAccelerate());
+
+    const jwt = c.req.header('Authorization')
+    if(!jwt) {
+        c.status(401)
+        return c.json({ status: 'Unauthorized'})
+    }
+    try {
+        const token = jwt.split(' ')[1]
+        const payload = await verify(token, c.env.JWT_SECRET)
+
+        if (!payload) {
+            c.status(401)
+            return c.json({ status: 'Unauthorized' })
+        }
+        const userId = payload.id as string
+        const user = await prisma.user.findUnique({
+            where: { id: userId },
+        })
+
+        if (!user) {
+            c.status(403)
+            return c.json({
+                message: "User not found"
+            })
+        }
+        return c.json({
+            name: user.name,
+            email: user.email
+        })
+    } catch (err) {
+        c.status(500)
+        return c.json({ error: err })
+    }
+})
 
 userRouter.post('/signin', async (c) => {
     const prisma = new PrismaClient({
