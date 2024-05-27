@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button"
 import { DropdownMenuTrigger, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuItem,
      DropdownMenuContent, DropdownMenu } from "@/components/ui/dropdown-menu"
 import AccountCircleSharpIcon from '@mui/icons-material/AccountCircleSharp'
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import axios from 'axios'
 
@@ -17,13 +17,16 @@ export default function Component() {
     navigate('/signin')
   }
 
+  useEffect(() => {
+    const token = localStorage.getItem('token')
+    if (!token) {
+      navigate('/signin')
+    }
+  }, [navigate])
+
   const handleCreateBlog = async (e: React.FormEvent) => {
     e.preventDefault();
     const token = localStorage.getItem("token");
-    if (!token) {
-      navigate("/signin");
-      return;
-    }
     const headers = {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`
