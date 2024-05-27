@@ -20,6 +20,10 @@ export default function Component() {
   const handleCreateBlog = async (e: React.FormEvent) => {
     e.preventDefault();
     const token = localStorage.getItem("token");
+    if (!token) {
+      navigate("/signin");
+      return;
+    }
     const headers = {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`

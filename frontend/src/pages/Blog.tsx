@@ -6,7 +6,7 @@ interface Blog {
   id: string;
   title: string;
   content: string;
-  createdAt: string; // You might want to change this to a Date type if possible
+  createdAt: string;
   author: {
     name: string;
     avatar?: string;
