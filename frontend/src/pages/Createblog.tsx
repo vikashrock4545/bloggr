@@ -10,6 +10,7 @@ export default function Component() {
   const [title, setTitle] = useState("")
   const [content, setContent] = useState("")
   const [error, setError] = useState("")
+  const [isPublishing, setIsPublishing] = useState(false)
 
   const navigate = useNavigate()
   const handleLogout = () => {
@@ -18,6 +19,7 @@ export default function Component() {
   }
 
   useEffect(() => {
+    setIsPublishing(true)
     const token = localStorage.getItem('token')
     if (!token) {
       navigate('/signin')
@@ -57,6 +59,8 @@ export default function Component() {
           setError("An unexpected error occurred. Please try again later.");
         }
       }
+    } finally {
+      setIsPublishing(false)
     }
   }
 
@@ -131,9 +135,9 @@ export default function Component() {
             </div>
             <Button
               className="px-4 py-2 font-medium text-gray-900 bg-gray-200 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
-              type="submit"
+              type="submit" disabled={isPublishing}
             >
-              Publish
+              {isPublishing ? "Publishing Blog..." : "Publish"}
             </Button>
           </div>
         </form>

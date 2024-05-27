@@ -10,9 +10,11 @@ export default function Component() {
   const [password, setPassword] = useState("")
   const [error, setError] = useState("")
   const navigate = useNavigate()
+  const [isSigningin, setIsSigningin] = useState(false)
 
   const handleSignin = async () => {
     try {
+        setIsSigningin(true)
         const response = await axios.post("https://backend.vikashr4545.workers.dev/api/v1/user/signin", {
             email,
             password,
@@ -39,6 +41,8 @@ export default function Component() {
           setError("An unexpected error occurred. Please try again later.");
       }
       }
+    } finally {
+      setIsSigningin(false)
     }
 }
   return (
@@ -66,7 +70,7 @@ export default function Component() {
                 setPassword(e.target.value)
               }}/>
             </div>
-            <Button className="w-full" onClick={handleSignin}>Sign In</Button>
+            <Button className="w-full" onClick={handleSignin} disabled={isSigningin}>{isSigningin ? "Signing in...." : "Sign In"}</Button>
             <div className="text-center text-gray-500 dark:text-gray-400">
               {error && <p className="text-red-500">{error}</p>}
               Don't have an account?

@@ -11,9 +11,11 @@ export default function Component() {
   const [password, setPassword] = useState("")
   const navigate = useNavigate()
   const [error, setError] = useState("");
+  const [isSigningup, setIsSigningup] = useState(false)
 
   const handleSignup = async () => {
     try {
+        setIsSigningup(true)
         const response = await axios.post("https://backend.vikashr4545.workers.dev/api/v1/user/signup", {
             name: username,
             password,
@@ -40,6 +42,8 @@ export default function Component() {
           setError("An unexpected error occurred. Please try again later.");
       }
       }
+    } finally {
+      setIsSigningup(false);
     }
 }
 
@@ -75,7 +79,7 @@ export default function Component() {
                 setPassword(e.target.value)
               }}/>
             </div>
-            <Button className="w-full" onClick={handleSignup}>Sign Up</Button>
+            <Button className="w-full" onClick={handleSignup} disabled={isSigningup}>{isSigningup ? "Signing up...." : "Sign Up"}</Button>
             <div className="text-center text-gray-500 dark:text-gray-400">
               {error && <p className="text-red-500">{error}</p>}
               Already have an account?
