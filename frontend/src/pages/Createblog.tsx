@@ -19,7 +19,6 @@ export default function Component() {
   }
 
   useEffect(() => {
-    setIsPublishing(true)
     const token = localStorage.getItem('token')
     if (!token) {
       navigate('/signin')
@@ -34,6 +33,7 @@ export default function Component() {
       'Authorization': `Bearer ${token}`
     }
     try {
+        setIsPublishing(true)
         await axios.post("https://backend.vikashr4545.workers.dev/api/v1/blog", 
             {
               title,
